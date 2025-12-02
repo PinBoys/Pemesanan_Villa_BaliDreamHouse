@@ -33,7 +33,7 @@ header:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 5%;
+  padding: 1rem 5%;
   animation: slideDown 1s ease forwards;
 }
 
@@ -80,25 +80,9 @@ header:hover {
   transition: all 0.3s ease;
 }
 
-.profile-icon img { 
-  border:2px solid rgba(255,255,255,0.8);
-}
-
-.alert { 
-  padding:8px 12px; border-radius:6px; 
-}
-
 .login-btn:hover {
   transform: translateY(-3px) scale(1.05);
   box-shadow: 0 6px 15px rgba(255, 179, 71, 0.5);
-}
-
-.logo img {
-  width: 70px;
-  height: auto;
-  vertical-align: middle;
-  margin-top: -3px;
-  transform: scale(1.5);
 }
 
 /* === HERO SECTION === */
@@ -258,12 +242,88 @@ header:hover {
   text-align: center;
 }
 
+.location h2 {
+  font-size: 2.4rem;
+  color: #222;
+  margin-bottom: 1.5rem;
+}
+
+.location p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.map-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-container iframe {
+  border: none;
+  width: 100%;
+  max-width: 800px;
+  height: 420px;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.map-container iframe:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.25);
+}
+
 /* === TESTIMONIALS === */
 .testimonials {
   padding: 6rem 10%;
   text-align: center;
   background: linear-gradient(to right, #fff7e6, #fff);
   position: relative;
+}
+
+.testimonials h2 {
+  font-size: 2.5rem;
+  color: #222;
+  margin-bottom: 2.5rem;
+}
+
+.testimonial-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.testimonial {
+  width: 300px;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transition: all 0.4s ease;
+  position: relative;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards;
+}
+
+.testimonial:nth-child(1) { animation-delay: 0.3s; }
+.testimonial:nth-child(2) { animation-delay: 0.6s; }
+
+.testimonial:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+.testimonial::before {
+  content: "“";
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  font-size: 4rem;
+  color: #ffb347;
+  opacity: 0.3;
 }
 
 /* === FOOTER === */
@@ -274,6 +334,32 @@ footer {
   text-align: center;
   position: relative;
   overflow: hidden;
+}
+
+footer::before {
+  content: "";
+  position: absolute;
+  bottom: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle at center, #ffb34730, transparent 70%);
+  filter: blur(100px);
+  animation: pulse 8s infinite alternate;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  border-top: 1px solid #444;
+  padding-top: 1rem;
 }
 
 /* === ANIMATIONS === */
@@ -323,132 +409,4 @@ footer {
   .map-container iframe {
     height: 300px;
   }
-}
-
-/* ================================
-   PROFILE DROPDOWN MENU
-================================ */
-.profile-menu-wrapper { 
-    position: relative; 
-}
-
-.profile-toggle {
-    background: none;
-    border: 0;
-    cursor: pointer;
-    padding: 0;
-}
-
-.profile-toggle img,
-.profile-icon img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.85);
-}
-
-/* Dropdown box */
-.profile-dropdown {
-    position: absolute;
-    right: 0;
-    top: 56px;
-    width: 260px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-    display: none;
-    z-index: 2000;
-    overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.06);
-    transform-origin: top right;
-}
-
-/* Saat muncul */
-.profile-dropdown.show {
-    display: block !important;
-    animation: dropdownIn 160ms ease;
-}
-
-/* Header dalam dropdown */
-.profile-header {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #f2f2f2;
-}
-
-.profile-header .mini-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.profile-meta .profile-name {
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-
-.profile-meta .profile-email {
-    font-size: 12px;
-    color: #666;
-}
-
-/* ITEM MENU */
-.dropdown-item {
-    display: block;
-    padding: 12px 18px;
-    color: #222; 
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    position: relative;
-    transition: all 0.25s ease;
-}
-
-/* Garis bawah animasi */
-.dropdown-item::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 18px;
-    width: 0%;
-    height: 2px;
-    background: #f5a623; /* warna oranye */
-    transition: width 0.25s ease;
-}
-
-/* HOVER STYLE */
-.dropdown-item:hover {
-    color: #f5a623; /* warna teks oranye saat hover */
-    background: #fff; /* tetap putih */
-}
-
-.dropdown-item:hover::after {
-    width: 90%; /* garis muncul */
-}
-
-
-/* Logout button */
-.logout-btn {
-    width: 100%;
-    background: none;
-    border: 0;
-    text-align: left;
-    padding: 10px 14px;
-    color: #e03e2d;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.logout-btn:hover {
-    background: #ffecec;
-}
-
-/* Animasi muncul */
-@keyframes dropdownIn {
-    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
 }

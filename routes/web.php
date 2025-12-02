@@ -1,62 +1,129 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 use App\Http\Controllers\VillaController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\AuthController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Di sini kita mendefinisikan semua routing untuk aplikasi
-| Pemesanan Villa Bali Dream House.
-|
-*/
 
 /* ============================
-   1. HALAMAN UTAMA (LANDING PAGE)
+   1️ HALAMAN UTAMA (LANDING PAGE)
    ============================ */
 Route::get('/', function () {
-    // Menampilkan halaman utama website
-    return view('landing');
+    return view('landing'); // resources/views/landing.blade.php
 })->name('landing');
 
 
 /* ============================
-   2. ROUTE CRUD DATA VILLA
+   2️ CRUD DATA VILLA
    ============================ */
-// CRUD otomatis (index, show, create, store, edit, update, destroy)
 Route::resource('villas', VillaController::class);
 
 
 /* ============================
-   3. ROUTE PEMESANAN VILLA
+   3️ PEMESANAN VILLA
    ============================ */
-// CRUD otomatis untuk pemesanan
 Route::resource('pemesanans', PemesananController::class);
 
-// Route khusus: buat pemesanan langsung dari halaman villa
-// Contoh URL: /villas/1/pesan
+// Route khusus pemesanan villa langsung dari halaman villa
 Route::get('/villas/{id}/pesan', [PemesananController::class, 'create'])
     ->name('villas.pesan');
 
 
 /* ============================
-   4. ROUTE PEMBAYARAN
+   4️ PEMBAYARAN
    ============================ */
-// CRUD otomatis untuk pembayaran
 Route::resource('pembayarans', PembayaranController::class);
 
-// Route khusus: pembayaran berdasarkan pemesanan tertentu
-// Contoh URL: /pemesanan/3/bayar
+// Route khusus: pembayaran berdasarkan id pemesanan
 Route::get('/pemesanan/{id}/bayar', [PembayaranController::class, 'create'])
     ->name('pemesanan.bayar');
 
 
 /* ============================
-   5. OPSIONAL (CEK ROUTE)
+   5️ AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
    ============================ */
-// Kamu bisa menjalankan "php artisan route:list" di terminal
-// untuk melihat semua route aktif beserta nama-namanya.
+// Halaman login
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+
+// Halaman register
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register']);
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
+/* ============================
+   6️ PASSWORD RESET (LUPA PASSWORD)
+   ============================ */
+
+//  Form untuk request reset password (input email)
+Route::get('/password/reset', function () {
+    return view('auth.passwords.email'); // resources/views/auth/passwords/email.blade.php
+})->name('password.request');
+
+//  Proses kirim link reset password ke email
+Route::post('/password/email', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+                ? back()->with('status', __($status))
+                : back()->withErrors(['email' => __($status)]);
+})->name('password.email');
+
+//  Form untuk memasukkan password baru (klik link dari email)
+Route::get('/password/reset/{token}', function ($token, Request $request) {
+    return view('auth.passwords.reset')->with([
+        'token' => $token,
+        'email' => $request->query('email'),
+    ]);
+})->name('password.reset');
+
+//  Proses update password baru
+Route::post('/password/reset', function (Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|confirmed|min:6',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->password = Hash::make($password);
+            $user->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+                ? redirect()->route('login')->with('status', __($status))
+                : back()->withErrors(['email' => [__($status)]]);
+})->name('password.update');
+
+
+/* ============================
+   7️ CEK ROUTE (DEBUG)
+   ============================ */
+// Jalankan di terminal untuk melihat semua route aktif:
+// php artisan route:list
+
+/* ============================
+   8️ PROFILE USER
+   ============================ */
+use App\Http\Controllers\ProfileController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
+});

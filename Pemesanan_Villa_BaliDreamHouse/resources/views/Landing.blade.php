@@ -7,66 +7,20 @@
 
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
 
-    <style>
-        /* kecil saja supaya profile icon rapi di navbar (override cepat) */
-        .nav-links { list-style:none; display:flex; gap:18px; align-items:center; margin:0; padding:0; }
-        .nav-links li { display:inline-flex; align-items:center; }
-        .login-btn { background:#f5b041; color:#fff; padding:8px 12px; border-radius:8px; text-decoration:none; }
-        .profile-icon img { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.85); }
-    </style>
 </head>
 <body>
     <!-- Navbar -->
-<header>
-    <nav class="navbar">
-        <div class="logo">
-            <img src="{{ asset('images/logo.png') }}" alt="">
-        </div>
-        <ul class="nav-links">
-            <li><a href="{{ route('landing') }}">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-
-            @guest
-                <li><a href="{{ route('login') }}" class="login-btn">Login</a></li>
-            @endguest
-
-            @auth
-<li class="profile-menu-wrapper" style="position:relative;">
-  <button type="button" class="profile-toggle" onclick="toggleProfileMenu()" aria-expanded="false" aria-controls="profileDropdown" style="background:none;border:0;padding:0;cursor:pointer;">
-    <img 
-      src="{{ auth()->user()->profile_photo
-              ? asset('profile_photos/' . auth()->user()->profile_photo)
-              : asset('images/default_avatar.jpg') }}"
-      alt="profile" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.85);">
-  </button>
-
-  <div id="profileDropdown" class="profile-dropdown show" role="menu" aria-hidden="false">
-    <div class="profile-header">
-      <img src="{{ auth()->user()->profile_photo
-              ? asset('profile_photos/' . auth()->user()->profile_photo)
-              : asset('images/default_avatar.jpg') }}"
-           alt="avatar" class="mini-avatar">
-      <div class="profile-meta">
-        <div class="profile-name">Hi, {{ auth()->user()->name }}</div>
-        <div class="profile-email">{{ auth()->user()->email }}</div>
-      </div>
-    </div>
-
-    <a href="{{ route('profile') }}" class="dropdown-item">View Profile</a>
-    <a href="{{ route('pembayarans.index') }}" class="dropdown-item">Payment History</a>
-
-    <form action="{{ route('logout') }}" method="POST" style="margin:0;">
-      @csrf
-      <button type="submit" class="dropdown-item logout-btn">Logout</button>
-    </form>
-  </div>
-</li>
-@endauth
-
-        </ul>
-    </nav>
-</header>
+    <header>
+        <nav class="navbar">
+            <div class="logo">🏠</div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#" class="login-btn">Login</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -111,6 +65,25 @@
         </div>
     </section>
 
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <h2>Hear from Our Guests</h2>
+        <div class="testimonial-container">
+            <div class="testimonial">
+                <p>"A serene piece of paradise!"</p>
+                <span>- John Doe</span>
+            </div>
+            <div class="testimonial">
+                <p>"Fantastic in all aspects!"</p>
+                <span>- Sarah M.</span>
+            </div>
+            <div class="testimonial">
+                <p>"An unforgettable getaway experience!"</p>
+                <span>- Liam R.</span>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <div class="footer-content">
@@ -129,7 +102,5 @@
             <p>©2025 Bali Dream House Villa</p>
         </div>
     </footer>
-
-    <script src="{{ asset('js/profile.js') }}"></script>
 </body>
 </html>
