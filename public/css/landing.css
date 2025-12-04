@@ -422,7 +422,7 @@ footer {
 
 /* HOVER STYLE */
 .dropdown-item:hover {
-    color: #f5a623; /* warna teks oranye saat hover */
+    color: #0f0f0f; /* warna teks oranye saat hover */
     background: #fff; /* tetap putih */
 }
 

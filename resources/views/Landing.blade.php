@@ -41,7 +41,7 @@
       alt="profile" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.85);">
   </button>
 
-  <div id="profileDropdown" class="profile-dropdown show" role="menu" aria-hidden="false">
+  <div id="profileDropdown" class="profile-dropdown" role="menu" aria-hidden="true">
     <div class="profile-header">
       <img src="{{ auth()->user()->profile_photo
               ? asset('profile_photos/' . auth()->user()->profile_photo)
