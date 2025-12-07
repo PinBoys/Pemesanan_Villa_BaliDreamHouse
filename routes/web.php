@@ -4,17 +4,20 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+
 use App\Http\Controllers\VillaController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\LogoutController;
 
 /* ============================
    1️ HALAMAN UTAMA (LANDING PAGE)
    ============================ */
 Route::get('/', function () {
-    return view('landing'); // resources/views/landing.blade.php
+    return view('landing'); 
 })->name('landing');
 
 
@@ -29,7 +32,11 @@ Route::resource('villas', VillaController::class);
    ============================ */
 Route::resource('pemesanans', PemesananController::class);
 
-// Route khusus pemesanan villa langsung dari halaman villa
+// Halaman khusus "Make a Reservation"
+Route::get('/reservation', [PemesananController::class, 'reservationPage'])
+    ->name('reservation');
+
+// Pemesanan langsung dari halaman villa
 Route::get('/villas/{id}/pesan', [PemesananController::class, 'create'])
     ->name('villas.pesan');
 
@@ -39,7 +46,7 @@ Route::get('/villas/{id}/pesan', [PemesananController::class, 'create'])
    ============================ */
 Route::resource('pembayarans', PembayaranController::class);
 
-// Route khusus: pembayaran berdasarkan id pemesanan
+// Pembayaran berdasarkan id pemesanan
 Route::get('/pemesanan/{id}/bayar', [PembayaranController::class, 'create'])
     ->name('pemesanan.bayar');
 
@@ -47,15 +54,15 @@ Route::get('/pemesanan/{id}/bayar', [PembayaranController::class, 'create'])
 /* ============================
    5️ AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
    ============================ */
-// Halaman login
+// Login
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
-// Halaman register
+// Register
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-// Logout
+// Logout (existing POST logout handled by AuthController)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
@@ -63,12 +70,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
    6️ PASSWORD RESET (LUPA PASSWORD)
    ============================ */
 
-//  Form untuk request reset password (input email)
+// Form request reset password
 Route::get('/password/reset', function () {
-    return view('auth.passwords.email'); // resources/views/auth/passwords/email.blade.php
+    return view('auth.passwords.email');
 })->name('password.request');
 
-//  Proses kirim link reset password ke email
+// Proses kirim email reset
 Route::post('/password/email', function (Request $request) {
     $request->validate(['email' => 'required|email']);
 
@@ -81,7 +88,7 @@ Route::post('/password/email', function (Request $request) {
                 : back()->withErrors(['email' => __($status)]);
 })->name('password.email');
 
-//  Form untuk memasukkan password baru (klik link dari email)
+// Form input password baru
 Route::get('/password/reset/{token}', function ($token, Request $request) {
     return view('auth.passwords.reset')->with([
         'token' => $token,
@@ -89,7 +96,7 @@ Route::get('/password/reset/{token}', function ($token, Request $request) {
     ]);
 })->name('password.reset');
 
-//  Proses update password baru
+// Proses update password baru
 Route::post('/password/reset', function (Request $request) {
     $request->validate([
         'token' => 'required',
@@ -112,36 +119,36 @@ Route::post('/password/reset', function (Request $request) {
 
 
 /* ============================
-   7️ CEK ROUTE (DEBUG)
+   7️ PROFILE USER
    ============================ */
-// Jalankan di terminal untuk melihat semua route aktif:
-// php artisan route:list
-
-/* ============================
-   8️ PROFILE USER
-   ============================ */
-use App\Http\Controllers\ProfileController;
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
 });
 
-/* ============================
-   9 PAYMENT HISTORY
-   ============================ */
-use App\Http\Controllers\HistoryController;
 
+/* ============================
+   8️ PAYMENT HISTORY
+   ============================ */
 Route::get('/history', [HistoryController::class, 'index'])
     ->name('history');
 
-/* ============================
-   10 LOGOUT CONFIRM
-   ============================ */
-use App\Http\Controllers\LogoutController;
 
+/* ============================
+   9️ LOGOUT CONFIRM (via LogoutController)
+   ============================ */
 Route::middleware('auth')->group(function () {
-    Route::get('/logout', [LogoutController::class, 'confirm'])->name('logout');
+    // halaman konfirmasi logout
+    Route::get('/logout/confirm', [LogoutController::class, 'confirm'])->name('logout.confirm');
+
+    // route untuk mengeksekusi logout (separate dari AuthController@logout)
     Route::post('/logout/perform', [LogoutController::class, 'logout'])->name('logout.perform');
 });
+
+
+/* ============================
+   10️ CEK ROUTE (DEBUG)
+   ============================ */
+// Jalankan di terminal untuk melihat semua route aktif:
+// php artisan route:list

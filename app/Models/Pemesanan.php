@@ -21,11 +21,13 @@ class Pemesanan extends Model
         'status_pemesanan'
     ];
 
+    // RELASI ke tabel villa
     public function villa()
     {
         return $this->belongsTo(Villa::class);
     }
 
+    // RELASI ke tabel pembayaran (1 pemesanan punya 1 pembayaran)
     public function pembayaran()
     {
         return $this->hasOne(Pembayaran::class);

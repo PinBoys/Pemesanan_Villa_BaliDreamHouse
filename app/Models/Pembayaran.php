@@ -12,10 +12,9 @@ class Pembayaran extends Model
     protected $fillable = [
         'pemesanan_id',
         'metode_pembayaran',
-        'tanggal_pembayaran',
         'jumlah_bayar',
-        'bukti_bayar',
-        'status_pembayaran'
+        'status_pembayaran',
+        'tgl_pembayaran'
     ];
 
     public function pemesanan()
