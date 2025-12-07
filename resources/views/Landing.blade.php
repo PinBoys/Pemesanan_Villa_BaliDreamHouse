@@ -41,7 +41,7 @@
       alt="profile" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.85);">
   </button>
 
-  <div id="profileDropdown" class="profile-dropdown show" role="menu" aria-hidden="false">
+  <div id="profileDropdown" class="profile-dropdown" role="menu" aria-hidden="true">
     <div class="profile-header">
       <img src="{{ auth()->user()->profile_photo
               ? asset('profile_photos/' . auth()->user()->profile_photo)
@@ -54,12 +54,10 @@
     </div>
 
     <a href="{{ route('profile') }}" class="dropdown-item">View Profile</a>
-    <a href="{{ route('pembayarans.index') }}" class="dropdown-item">Payment History</a>
+    <a href="{{ route('history') }}" class="btn btn-primary">Payment History</a>
 
-    <form action="{{ route('logout') }}" method="POST" style="margin:0;">
-      @csrf
-      <button type="submit" class="dropdown-item logout-btn">Logout</button>
-    </form>
+     <!-- arahkan ke halaman konfirmasi logout -->
+    <a href="{{ route('logout') }}" class="dropdown-item logout-btn">Logout</a>
   </div>
 </li>
 @endauth

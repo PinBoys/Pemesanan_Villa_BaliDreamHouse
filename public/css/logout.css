@@ -1,0 +1,206 @@
+/* logout.css - final, cleaned & consolidated for logout-confirm page */
+:root{
+  --navbar-height:72px;
+  --modal-width:640px;
+  --modal-radius:22px;
+  --accent-red-1:#ff5a5a;
+  --accent-red-2:#d93b30;
+}
+
+/* Scope to the logout page */
+body.logout-page {
+  margin:0;
+  font-family: "Poppins", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  color: #222;
+  background: #111;
+  height:100%;
+  overflow-x:hidden;
+}
+
+/* ===== NAVBAR ===== */
+.logout-navbar {
+  position: fixed;
+  top:0; left:0; right:0;
+  height: var(--navbar-height);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 28px;
+  background: rgba(45,37,37,0.96);
+  z-index: 1200; /* very high so nothing covers it */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.24);
+  box-sizing: border-box;
+}
+
+/* brand/logo: keep at left */
+.lnav-left {
+  display:flex;
+  align-items:center;
+  order: 1;
+}
+
+/* logo size */
+.lnav-logo { height:90px; width:auto; object-fit:contain; display:block; }
+
+/* ===== NAV LINKS: MOVE TO RIGHT =====
+   We push the nav block to the right using margin-left:auto and control flex order.
+   This keeps the brand left, menu near right icons, and icons at the far right.
+*/
+.lnav-nav {
+  margin-left: auto;    /* push nav to right side */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  order: 2;
+}
+
+/* the list inside nav */
+.lnav-list {
+  list-style:none;
+  display:flex;
+  gap:22px;
+  align-items:center;
+  margin:0;
+  padding:0;
+}
+
+/* ensure list items inline and no bullets */
+.lnav-list li { list-style:none; display:inline-block; vertical-align:middle; }
+.lnav-list a { color:#fff; text-decoration:none; font-weight:600; padding:6px 8px; }
+
+/* right icons (bell + profile) stay at the far right */
+.lnav-right {
+  margin-left: 12px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  order: 3;
+}
+
+/* icon & avatar */
+.lnav-icon { background:transparent; border:0; color:#fff; font-size:18px; cursor:pointer; }
+.profile-link img { width:30px; height:30px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.88); }
+
+/* logout label (if present inside navbar right area) */
+.logout-label {
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  margin-right: 8px;
+  opacity: 0.95;
+  white-space: nowrap;
+}
+
+/* ===== HERO BACKGROUND (BEHIND EVERYTHING) ===== */
+.logout-hero {
+  position: fixed;
+  inset: 0;
+  z-index: -2;              /* behind all content */
+  pointer-events: none;
+}
+.logout-hero-img {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1) contrast(0.95) brightness(0.95);
+  transform: translateZ(0);
+}
+.logout-hero-dark {
+  position:absolute; inset:0;
+  background: linear-gradient(rgba(0,0,0,0.18), rgba(0,0,0,0.18));
+  z-index: -1;
+}
+
+/* small top-center label (keamanan jika masih ada) - hidden since menu moved */
+.logout-toplabel {
+  display: none !important;
+}
+
+/* ===== MODAL OVERLAY & CARD (CENTERED) ===== */
+.logout-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display:flex;
+  align-items:center;        /* vertical center */
+  justify-content:center;    /* horizontal center */
+  z-index: 1300;             /* above navbar */
+  background: rgba(0,0,0,0.36);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.logout-modal-card {
+  width: var(--modal-width);
+  max-width: 94%;
+  background: rgba(255,255,255,0.985);
+  border-radius: var(--modal-radius);
+  padding: 30px 28px;
+  text-align:center;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+  position: relative;
+  margin: 0 auto;           /* ensure horizontally centered */
+  transform: none;
+  box-sizing: border-box;
+  display:block;
+}
+
+/* icon/title/sub */
+.logout-modal-icon { font-size:42px; margin-bottom:8px; display:block; }
+.logout-modal-title { font-size:20px; margin:6px 0 6px; font-weight:700; color:#222; }
+.logout-modal-sub { color:#555; margin-bottom:18px; font-size:15px; }
+
+/* actions */
+.logout-modal-actions { display:flex; gap:16px; justify-content:center; margin-top: 18px; flex-wrap:wrap; }
+.btn-cancel, .btn-logout {
+  padding: 12px 26px;
+  border-radius: 10px;
+  font-weight:700;
+  min-width:140px;
+  cursor:pointer;
+  border: none;
+}
+
+/* cancel */
+.btn-cancel {
+  background: #ffffff;
+  color: #222;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+}
+
+/* logout */
+.btn-logout {
+  background: linear-gradient(180deg, var(--accent-red-1), var(--accent-red-2));
+  color:#fff;
+  box-shadow: 0 12px 30px rgba(217,48,37,0.18);
+}
+
+/* responsive */
+@media (max-width: 880px) {
+  .lnav-list { gap:12px; }
+  .logout-modal-card { width: 92%; padding:22px; border-radius:14px; }
+  .btn-cancel, .btn-logout { min-width:110px; padding:10px 16px; }
+}
+
+/* defensive: force lists inline inside logout page */
+body.logout-page ul { list-style:none !important; margin:0 !important; padding:0 !important; }
+body.logout-page li { list-style:none !important; display:inline-block !important; vertical-align:middle !important; }
+
+/* small screen vertical center fallback */
+@media (max-height:700px) {
+  .logout-modal-overlay { align-items:flex-start; padding-top: calc(var(--navbar-height) + 16px); }
+  .logout-modal-card { margin-top: 6vh; }
+}
+
+/* final: remove any accidental transforms or offsets applied by other CSS */
+.logout-modal-card[style], .logout-modal-overlay[style] {
+  /* allow inline style but ensure center if set */
+  margin-left: auto !important;
+  margin-right: auto !important;
+}

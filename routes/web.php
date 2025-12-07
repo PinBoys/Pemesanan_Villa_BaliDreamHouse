@@ -127,3 +127,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
 });
+
+/* ============================
+   9 PAYMENT HISTORY
+   ============================ */
+use App\Http\Controllers\HistoryController;
+
+Route::get('/history', [HistoryController::class, 'index'])
+    ->name('history');
+
+/* ============================
+   10 LOGOUT CONFIRM
+   ============================ */
+use App\Http\Controllers\LogoutController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/logout', [LogoutController::class, 'confirm'])->name('logout');
+    Route::post('/logout/perform', [LogoutController::class, 'logout'])->name('logout.perform');
+});
