@@ -36,8 +36,8 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // 🔥 setelah login → redirect ke halaman profile
-            return redirect()->intended(route('profile'));
+            // Redirect ke intended jika ada, fallback ke landing
+            return redirect()->intended(route('landing'));
         }
 
         throw ValidationException::withMessages([
@@ -76,14 +76,13 @@ class AuthController extends Controller
 
             Auth::login($user);
 
-            // 🔥 setelah register → redirect ke profile
-            return redirect()->route('profile')
+            // Setelah register → redirect ke intended/fallback landing
+            return redirect()->intended(route('landing'))
                 ->with('success', 'Registrasi berhasil. Selamat datang!');
         } catch (QueryException $e) {
-    return back()->withInput()
-        ->withErrors(['email' => $e->getMessage()]);
-}
-
+            return back()->withInput()
+                ->withErrors(['email' => $e->getMessage()]);
+        }
     }
 
     // ===============================

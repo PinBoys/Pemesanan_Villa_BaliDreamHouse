@@ -8,80 +8,60 @@ use App\Http\Controllers\VillaController;
 use App\Http\Controllers\PemesananController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\ProfileController;
 
 /* ============================
-   1️ HALAMAN UTAMA (LANDING PAGE)
+   1️ HALAMAN UTAMA
    ============================ */
 Route::get('/', function () {
-    return view('landing'); // resources/views/landing.blade.php
+    return view('landing');
 })->name('landing');
-
 
 /* ============================
    2️ CRUD DATA VILLA
    ============================ */
 Route::resource('villas', VillaController::class);
 
-
 /* ============================
    3️ PEMESANAN VILLA
    ============================ */
 Route::resource('pemesanans', PemesananController::class);
-
-// Route khusus pemesanan villa langsung dari halaman villa
-Route::get('/villas/{id}/pesan', [PemesananController::class, 'create'])
-    ->name('villas.pesan');
-
+Route::get('/villas/{id}/pesan', [PemesananController::class, 'create'])->name('villas.pesan');
 
 /* ============================
    4️ PEMBAYARAN
    ============================ */
 Route::resource('pembayarans', PembayaranController::class);
-
-// Route khusus: pembayaran berdasarkan id pemesanan
-Route::get('/pemesanan/{id}/bayar', [PembayaranController::class, 'create'])
-    ->name('pemesanan.bayar');
-
+Route::get('/pemesanan/{id}/bayar', [PembayaranController::class, 'create'])->name('pemesanan.bayar');
 
 /* ============================
-   5️ AUTENTIKASI (LOGIN, REGISTER, LOGOUT)
+   5️ AUTENTIKASI
    ============================ */
-// Halaman login
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 
-// Halaman register
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
-// Logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
 /* ============================
-   6️ PASSWORD RESET (LUPA PASSWORD)
+   6️ PASSWORD RESET
    ============================ */
-
-//  Form untuk request reset password (input email)
 Route::get('/password/reset', function () {
-    return view('auth.passwords.email'); // resources/views/auth/passwords/email.blade.php
+    return view('auth.passwords.email');
 })->name('password.request');
 
-//  Proses kirim link reset password ke email
 Route::post('/password/email', function (Request $request) {
     $request->validate(['email' => 'required|email']);
 
-    $status = Password::sendResetLink(
-        $request->only('email')
-    );
+    $status = Password::sendResetLink($request->only('email'));
 
     return $status === Password::RESET_LINK_SENT
                 ? back()->with('status', __($status))
                 : back()->withErrors(['email' => __($status)]);
 })->name('password.email');
 
-//  Form untuk memasukkan password baru (klik link dari email)
 Route::get('/password/reset/{token}', function ($token, Request $request) {
     return view('auth.passwords.reset')->with([
         'token' => $token,
@@ -89,7 +69,6 @@ Route::get('/password/reset/{token}', function ($token, Request $request) {
     ]);
 })->name('password.reset');
 
-//  Proses update password baru
 Route::post('/password/reset', function (Request $request) {
     $request->validate([
         'token' => 'required',
@@ -112,18 +91,15 @@ Route::post('/password/reset', function (Request $request) {
 
 
 /* ============================
-   7️ CEK ROUTE (DEBUG)
+   8️ PROFILE USER (DIPERBAIKI)
    ============================ */
-// Jalankan di terminal untuk melihat semua route aktif:
-// php artisan route:list
-
-/* ============================
-   8️ PROFILE USER
-   ============================ */
-use App\Http\Controllers\ProfileController;
-
 Route::middleware('auth')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+
+    // Route yang hilang & menyebabkan error → sekarang sudah ditambahkan
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo');
 });

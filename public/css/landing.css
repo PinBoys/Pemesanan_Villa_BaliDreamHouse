@@ -8,21 +8,23 @@
 }
 
 body {
-  color: #333;
+
   background-color: #fff;
   overflow-x: hidden;
 }
 
 /* === NAVBAR === */
+/* header tetap fixed tapi beri z-index kuat supaya elemen navbar & avatar selalu di atas */
 header {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 1000;
+  z-index: 10050; /* lebih tinggi untuk memastikan di atas hero */
   background: rgba(26, 26, 26, 0.6);
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   transition: background 0.4s ease, box-shadow 0.4s ease;
+  pointer-events: auto;
 }
 
 header:hover {
@@ -44,7 +46,7 @@ header:hover {
 }
 
 .nav-links a {
-  color: #fff;
+  color: #000000;
   text-decoration: none;
   position: relative;
   font-weight: 500;
@@ -80,12 +82,47 @@ header:hover {
   transition: all 0.3s ease;
 }
 
-.profile-icon img { 
-  border:2px solid rgba(255,255,255,0.8);
+.profile-icon img {
+  border: 2px solid rgba(255,255,255,0.8);
 }
 
-.alert { 
-  padding:8px 12px; border-radius:6px; 
+/* sembunyikan default */
+.profile-dropdown {
+  display: none;
+  position: absolute;
+  right: 0;                /* sesuaikan agar muncul di kanan avatar */
+  top: calc(100% + 8px);    /* sedikit jarak di bawah avatar */
+  min-width: 220px;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 9999;
+  color: white;
+}
+
+.profile-dropdown * {
+    color: white !important;
+}
+/* ketika aktif, tampilkan */
+.profile-dropdown.show {
+  display: block;
+}
+
+/* sedikit style agar posisi container relatif ke parent */
+.profile-menu-wrapper { position: relative; }
+
+/* style kecil agar tombol tidak men-stretch di mobile */
+.profile-toggle {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+
+.alert {
+  padding: 8px 12px; border-radius: 6px;
 }
 
 .login-btn:hover {
@@ -115,12 +152,14 @@ header:hover {
   overflow: hidden;
 }
 
+/* allow clicks through the overlay so navbar/avatar are clickable */
 .hero::before {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(to bottom right, rgba(0,0,0,0.5), rgba(0,0,0,0.7));
   z-index: 1;
+  pointer-events: none; /* <--- important */
 }
 
 .hero-content {
@@ -241,9 +280,6 @@ header:hover {
   transition: color 0.3s ease;
 }
 
-.card:hover h3 {
-  color: #ffb347;
-}
 
 .card p {
   padding: 0 1.2rem 1.5rem;
@@ -267,13 +303,66 @@ header:hover {
 }
 
 /* === FOOTER === */
-footer {
-  background: #1a1a1a;
+/* FOOTER (satu footer, 3-kolom) */
+.site-footer {
+  background: #4a4a4a;
   color: #eee;
-  padding: 4rem 10% 2rem;
-  text-align: center;
+  padding: 48px 5% 24px;
   position: relative;
   overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+/* container */
+.site-footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* grid */
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 30px;
+  align-items: start;
+  margin-bottom: 18px;
+}
+
+.site-footer h3 {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: #fff;
+}
+
+.footer-col p {
+  color: #e6e6e6;
+  line-height: 1.6;
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.footer-bottom {
+  margin-top: 10px;
+  padding-top: 12px;
+}
+.footer-rule {
+  border: 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin: 0 0 12px;
+}
+
+.copyright-small {
+  text-align: left;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  margin: 0;
+}
+
+/* responsive */
+@media (max-width: 860px) {
+  .footer-inner { grid-template-columns: 1fr; text-align: left; }
+  .copyright-small { text-align: center; margin-top: 12px; }
 }
 
 /* === ANIMATIONS === */
@@ -326,129 +415,197 @@ footer {
 }
 
 /* ================================
-   PROFILE DROPDOWN MENU
+   PROFILE DROPDOWN MENU (FIXED)
+   - use opacity/pointer-events (not display:none)
+   - ensure z-index high so nothing covers it
+   - ensure header/navbar/parent do not clip it
 ================================ */
-.profile-menu-wrapper { 
-    position: relative; 
+.profile-menu-wrapper {
+  position: relative !important;
+  z-index: 10100; /* ensure wrapper above hero */
+  pointer-events: auto;
 }
 
+/* avatar toggle styles */
 .profile-toggle {
-    background: none;
-    border: 0;
-    cursor: pointer;
-    padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-toggle img,
-.profile-icon img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid rgba(255,255,255,0.85);
+.profile-icon img,
+.profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.85);
+  z-index: 10110;
+  pointer-events: auto;
 }
 
-/* Dropdown box */
+/* dropdown box - kept in DOM, toggled by .show */
 .profile-dropdown {
-    position: absolute;
-    right: 0;
-    top: 56px;
-    width: 260px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-    display: none;
-    z-index: 2000;
-    overflow: hidden;
-    border: 1px solid rgba(0,0,0,0.06);
-    transform-origin: top right;
+  position: absolute;
+  right: 0;
+  top: 56px;
+  width: 300px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  opacity: 0;
+  transform: translateY(-6px) scale(0.98);
+  pointer-events: none;
+  z-index: 10200; /* very high so it floats above everything */
+  transition: opacity 160ms ease, transform 160ms ease;
+  border: 1px solid rgba(0,0,0,0.06);
+  overflow: hidden;
 }
 
-/* Saat muncul */
+/* visible state controlled by JS */
 .profile-dropdown.show {
-    display: block !important;
-    animation: dropdownIn 160ms ease;
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  pointer-events: auto !important;
 }
 
-/* Header dalam dropdown */
+/* dropdown contents */
 .profile-header {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #f2f2f2;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  border-bottom:1px solid #f2f2f2;
 }
+.profile-header .mini-avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; }
+.profile-meta .profile-name { font-weight:700; margin-bottom:2px; }
+.profile-meta .profile-email { font-size:12px; color:#666; }
 
-.profile-header .mini-avatar {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+.dropdown-item { display:block; padding:12px 18px; color:#222; text-decoration:none; }
+.dropdown-item:hover { background:#f9f9f9; color:#000; }
 
-.profile-meta .profile-name {
-    font-weight: 700;
-    margin-bottom: 2px;
-}
+/* ensure parent doesn't clip dropdown */
+header, .navbar, .profile-menu-wrapper { overflow: visible !important; }
 
-.profile-meta .profile-email {
-    font-size: 12px;
-    color: #666;
-}
-
-/* ITEM MENU */
+/* ITEM MENU (fine-grained) */
 .dropdown-item {
-    display: block;
-    padding: 12px 18px;
-    color: #222; 
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    position: relative;
-    transition: all 0.25s ease;
+  display: block;
+  padding: 12px 18px;
+  color: #222;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  transition: all 0.25s ease;
 }
 
 /* Garis bawah animasi */
 .dropdown-item::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 18px;
-    width: 0%;
-    height: 2px;
-    background: #f5a623; /* warna oranye */
-    transition: width 0.25s ease;
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 18px;
+  width: 0%;
+  height: 2px;
+  background: #f5a623;
+  transition: width 0.25s ease;
 }
 
-/* HOVER STYLE */
 .dropdown-item:hover {
-    color: #f5a623; /* warna teks oranye saat hover */
-    background: #fff; /* tetap putih */
+  color: #0f0f0f;
+  background: #fff;
 }
 
 .dropdown-item:hover::after {
-    width: 90%; /* garis muncul */
+  width: 90%;
 }
-
 
 /* Logout button */
 .logout-btn {
-    width: 100%;
-    background: none;
-    border: 0;
-    text-align: left;
-    padding: 10px 14px;
-    color: #e03e2d;
-    cursor: pointer;
-    font-size: 14px;
+  width: 100%;
+  background: none;
+  border: 0;
+  text-align: left;
+  padding: 10px 14px;
+  color: #e03e2d;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .logout-btn:hover {
-    background: #ffecec;
+  background: #ffecec;
 }
 
-/* Animasi muncul */
-@keyframes dropdownIn {
-    from { opacity: 0; transform: translateY(-6px) scale(0.98); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+/* Accessibility: ensure aria changes reflect visually when JS toggles .show */
+.profile-toggle[aria-expanded="true"] { outline: none; }
+
+/* small safety/debug helpers (comment/remove later if not needed) */
+/* [style*="pointer-events:none"] { pointer-events: auto !important; }  -- uncomment only for temporary debugging */
+
+/* ================================
+   STRONG OVERRIDES: pastikan teks dropdown terlihat
+   Tambahkan ini terakhir supaya menimpa aturan lain
+================================= */
+
+.profile-dropdown {
+  background: #fff !important;
+  color: #222 !important;
+  -webkit-text-fill-color: #222 !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: 0 18px 40px rgba(10,10,10,0.18) !important;
+  z-index: 30000 !important;
+  opacity: 1 !important; /* visible state override safety */
+}
+
+/* paksa semua teks & elemen di dropdown jadi jelas */
+.profile-dropdown, 
+.profile-dropdown * {
+  color: #222 !important;
+  -webkit-text-fill-color: #222 !important;
+  text-shadow: none !important;
+  background: transparent !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+  mix-blend-mode: normal !important;
+  filter: none !important;
+}
+
+/* pastikan link/item terlihat */
+.profile-dropdown .dropdown-item,
+.profile-dropdown a,
+.profile-dropdown button,
+.profile-dropdown div,
+.profile-dropdown p {
+  color: #222 !important;
+  background: transparent !important;
+  -webkit-text-fill-color: #222 !important;
+}
+
+/* hapus potensi clipping */
+header, .navbar, .profile-menu-wrapper { overflow: visible !important; }
+
+/* debug outline (hilangkan bila sudah ok) */
+.profile-dropdown { outline: 1px solid rgba(0,0,0,0.06) !important; }
+
+/* Jika masih ada rule -webkit-text-fill-color: transparent di ancestor, override spesifik */
+.profile-dropdown * {
+  -webkit-text-fill-color: #222 !important;
+}
+
+/* small responsive tweaks so dropdown tidak keluar layar di mobile */
+@media (max-width: 480px) {
+  .profile-dropdown {
+    right: 8px !important;
+    left: auto !important;
+    width: calc(100% - 32px) !important;
+    top: 56px !important;
+  }
 }
