@@ -517,8 +517,8 @@ header, .navbar, .profile-menu-wrapper { overflow: visible !important; }
 }
 
 .dropdown-item:hover {
-  color: #0f0f0f;
-  background: #fff;
+    color: #f5a623; /* warna teks oranye saat hover */
+    background: #fff; /* tetap putih */
 }
 
 .dropdown-item:hover::after {

@@ -79,48 +79,26 @@ document.addEventListener('DOMContentLoaded', function () {
         >
     </button>
 
-    <!-- DROPDOWN -->
-    <div 
-        id="profileDropdown" 
-        class="hidden pt-5 absolute right-0 mt-[30px] w-96 bg-white text-black rounded-xl shadow-xl p-4 z-50"
-    >
-        <!-- Header -->
-        <div class="flex items-center gap-3 pb-3 border-b">
-            <img 
-                src="{{ auth()->user()->profile_photo
-                        ? asset('profile_photos/' . auth()->user()->profile_photo)
-                        : asset('images/default_avatar.jpg') }}"
-                class="w-12 h-12 rounded-full object-cover"
-            >
-            <div>
-                <p class="font-semibold">Hi, {{ auth()->user()->name }}</p>
-                <p class="text-sm text-gray-500">{{ auth()->user()->email }}</p>
-            </div>
-        </div>
-
-        <!-- Menu Items -->
-<a href="{{ route('profile') }}" 
-    class="block mt-3 py-2 text-sm text-black transition">
-    View Profile
-</a>
-
-<a href="{{ route('pembayarans.index') }}" 
-    class="block py-2 text-sm text-black transition">
-    Payment History
-</a>
-
-
-        <!-- Logout -->
-        <form action="{{ route('logout') }}" method="POST" class="mt-3">
-            @csrf
-            <button 
-                type="submit" 
-                class="block w-full text-left py-2 text-sm hover:text-red-600 transition"
-            >
-                Logout
-            </button>
-        </form>
+  <div id="profileDropdown" class="profile-dropdown show" role="menu" aria-hidden="false">
+    <div class="profile-header">
+      <img src="{{ auth()->user()->profile_photo
+              ? asset('profile_photos/' . auth()->user()->profile_photo)
+              : asset('images/default_avatar.jpg') }}"
+           alt="avatar" class="mini-avatar">
+      <div class="profile-meta">
+        <div class="profile-name">Hi, {{ auth()->user()->name }}</div>
+        <div class="profile-email">{{ auth()->user()->email }}</div>
+      </div>
     </div>
+
+    <a href="{{ route('profile') }}" class="dropdown-item">View Profile</a>
+    <a href="{{ route('pembayarans.index') }}" class="dropdown-item">Payment History</a>
+
+    <form action="{{ route('logout') }}" method="POST" style="margin:0;">
+      @csrf
+      <button type="submit" class="dropdown-item logout-btn">Logout</button>
+    </form>
+  </div>
 </li>
 
             @endauth
