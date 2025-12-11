@@ -1,0 +1,122 @@
+/* === RESET & GLOBAL === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #fff;
+  background: url("../images/header1.jpg") center/cover no-repeat fixed;
+  overflow-x: hidden;
+}
+
+/* === WRAPPER === */
+.register-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 120px; /* supaya form tidak ketutup navbar */
+}
+
+/* === REGISTER CARD === */
+.register-card {
+  width: 480px;
+  max-width: 90%;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  animation: fadeIn 1.5s ease;
+}
+
+/* === TITLE === */
+.register-card h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 36px;
+  margin-bottom: 24px;
+  color: #fff;
+}
+
+/* === INPUT FIELD === */
+.register-card .input {
+  width: 100%;
+  display: block;
+  padding: 12px 16px;
+  margin: 10px 0;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-size: 15px;
+  transition: 0.3s ease;
+}
+
+.register-card .input::placeholder {
+  color: #bbb;
+}
+
+.register-card .input:focus {
+  outline: none;
+  border-color: #ffb347;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* === BUTTON REGISTER === */
+.register-card .btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 40px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #ffb347, #ffcc33);
+  color: #1a1a1a;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.register-card .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(255, 179, 71, 0.4);
+}
+
+/* === LOGIN LINK === */
+.register-card .login-text {
+  margin-top: 18px;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.register-card .login-text a {
+  color: #ffb347;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-card .login-text a:hover {
+  text-decoration: underline;
+}
+
+/* === ANIMATION === */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .register-card {
+    width: 90%;
+    padding: 28px;
+  }
+
+  .register-card h1 {
+    font-size: 28px;
+  }
+}
