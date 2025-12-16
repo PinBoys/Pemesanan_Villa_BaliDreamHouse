@@ -81,25 +81,14 @@
 <nav class="navbar max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 <div class="flex items-center gap-4">
 <div class="logo">
-<img src="{{ asset('images/logo.png') }}" alt="Villa Bali Logo" style="width:52px;height:52px;object-fit:contain;">
+<img src="{{ asset('images/logo.png') }}" alt="Villa Bali Logo" style="width:70px;height:70px;object-fit:contain;">
 </div>
 <div>
-<div class="text-white font-bold">Villa Bali</div>
-<div class="text-xs text-white/80">Dream House Villa</div>
 </div>
 </div>
 
 
-<ul class="nav-links">
-<li><a href="{{ route('landing') }}" class="text-white hover:underline">Home</a></li>
-<li><a href="#about" class="text-white hover:underline">About</a></li>
-<li><a href="#about" class="text-white hover:underline">availability</a></li>
-<li><a href="#contact" class="text-white hover:underline">Contact</a></li>
 
-
-@guest
-<li><a href="{{ route('login') }}" class="login-btn">Login</a></li>
-@endguest
 
 
 @auth
@@ -280,183 +269,135 @@ style="background-image: url('{{ asset('images/header1.jpg') }}'); min-height:10
   </footer>
 
   <!-- Alpine app -->
-  <script>
-    function availabilityApp(){
-      return {
-        // data dari PHP (fallback)
-        villas: {!! json_encode($villas ?? [
-          ['id' => 1, 'name' => 'Bali Dream House Villa 1'],
-          ['id' => 2, 'name' => 'Bali Dream House Villa 2'],
-        ]) !!},
+<script>
+  function availabilityApp(){
+    return {
+      villas: {!! json_encode($villas ?? [
+        ['id' => 1, 'name' => 'Bali Dream House Villa 1'],
+        ['id' => 2, 'name' => 'Bali Dream House Villa 2'],
+      ]) !!},
 
-        // bookingsMap: object keyed by villa id -> array of 'YYYY-MM-DD'
-        bookingsMap: {!! json_encode($bookingsMap ?? [
-          1 => ['2025-11-03','2025-11-04','2025-11-23'],
-          2 => ['2025-11-10']
-        ]) !!},
+      bookingsMap: {!! json_encode($bookingsMap ?? [
+        1 => ['2025-11-03','2025-11-04','2025-11-23'],
+        2 => ['2025-11-10']
+      ]) !!},
 
-        selectedVilla: {!! json_encode(old('villa_id') ?? ($villas[0]['id'] ?? 1)) !!},
+      selectedVilla: {!! json_encode(old('villa_id') ?? ($villas[0]['id'] ?? 1)) !!},
 
-        // range state
-        selectedStart: null,
-        selectedEnd: null,
-        selectedStartDisplay: null,
-        selectedEndDisplay: null,
+      selectedStart: null,
+      selectedEnd: null,
+      selectedStartDisplay: null,
+      selectedEndDisplay: null,
 
-        guests: 2,
+      guests: 2,
 
-        // view state
-        viewMonth: (new Date()).getMonth(),
-        viewYear: (new Date()).getFullYear(),
+      viewMonth: (new Date()).getMonth(),
+      viewYear: (new Date()).getFullYear(),
 
-        months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-        weekdayShort: ['Su','Mo','Tu','We','Th','Fr','Sa'],
-        years: (() => { let y=[]; const cur=new Date().getFullYear(); for(let i=cur-5;i<=cur+5;i++) y.push(i); return y })(),
+      months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+      weekdayShort: ['Su','Mo','Tu','We','Th','Fr','Sa'],
+      years: (() => {
+        let y=[];
+        const cur=new Date().getFullYear();
+        for(let i=cur-5;i<=cur+5;i++) y.push(i);
+        return y;
+      })(),
 
-        calendar: [],
+      calendar: [],
 
-        init(){
-          this.regenerate();
-        },
+      init(){
+        this.regenerate();
+      },
 
-        toKey(date){
-          const y = date.getFullYear();
-          const m = String(date.getMonth()+1).padStart(2,'0');
-          const d = String(date.getDate()).padStart(2,'0');
-          return `${y}-${m}-${d}`;
-        },
+      toKey(date){
+        return date.toISOString().slice(0,10);
+      },
 
-        isBooked(date){
-          const key = this.toKey(date);
-          const arr = this.bookingsMap[this.selectedVilla] || [];
-          return arr.includes(key);
-        },
+      isBooked(date){
+        return (this.bookingsMap[this.selectedVilla] || []).includes(this.toKey(date));
+      },
 
-        isSameDate(a,b){
-          if(!a || !b) return false;
-          return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
-        },
+      isSameDate(a,b){
+        return a && b &&
+          a.getFullYear()===b.getFullYear() &&
+          a.getMonth()===b.getMonth() &&
+          a.getDate()===b.getDate();
+      },
 
-        // range helpers
-        isStart(date){ return this.selectedStart && this.isSameDate(date, this.selectedStart); },
-        isEnd(date){ return this.selectedEnd && this.isSameDate(date, this.selectedEnd); },
-        isInRange(date){
-          if(!this.selectedStart || !this.selectedEnd) return false;
-          const t = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-          const s = new Date(this.selectedStart.getFullYear(), this.selectedStart.getMonth(), this.selectedStart.getDate()).getTime();
-          const e = new Date(this.selectedEnd.getFullYear(), this.selectedEnd.getMonth(), this.selectedEnd.getDate()).getTime();
-          return t > s && t < e;
-        },
+      isStart(d){ return this.isSameDate(d,this.selectedStart); },
+      isEnd(d){ return this.isSameDate(d,this.selectedEnd); },
 
-        selectDate(date){
-          if(this.isBooked(date)) return;
+      isInRange(d){
+        if(!this.selectedStart || !this.selectedEnd) return false;
+        return d > this.selectedStart && d < this.selectedEnd;
+      },
 
-          // if no start => set start
-          if(!this.selectedStart){
-            this.selectedStart = date;
-            this.selectedEnd = null;
-            this.selectedStartDisplay = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-            this.selectedEndDisplay = null;
-            return;
-          }
+      selectDate(date){
+        if(this.isBooked(date)) return;
 
-          // if start exists but no end => set end (or restart if chosen earlier)
-          if(this.selectedStart && !this.selectedEnd){
-            if(date.getTime() < this.selectedStart.getTime()){
-              // user clicked earlier day -> treat as new start
-              this.selectedStart = date;
-              this.selectedStartDisplay = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-              return;
-            }
-            // if same day -> set checkout to next day
-            if(this.isSameDate(date, this.selectedStart)){
-              const next = new Date(this.selectedStart);
-              next.setDate(next.getDate() + 1);
-              this.selectedEnd = next;
-            } else {
-              this.selectedEnd = date;
-            }
-            this.selectedEndDisplay = this.selectedEnd.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-            return;
-          }
-
-          // if both set -> restart with new start
+        if(!this.selectedStart){
           this.selectedStart = date;
-          this.selectedEnd = null;
-          this.selectedStartDisplay = date.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-          this.selectedEndDisplay = null;
-        },
-
-        clearRange(){
-          this.selectedStart = null;
-          this.selectedEnd = null;
-          this.selectedStartDisplay = null;
-          this.selectedEndDisplay = null;
-        },
-
-        regenerate(){
-          const first = new Date(this.viewYear, this.viewMonth, 1);
-          const startDay = first.getDay();
-          const daysInMonth = new Date(this.viewYear, this.viewMonth+1, 0).getDate();
-
-          const prevDays = startDay;
-          const totalCells = Math.ceil((prevDays + daysInMonth)/7)*7;
-          const cells = [];
-
-          const prevMonthLastDate = new Date(this.viewYear, this.viewMonth, 0).getDate();
-          for(let i=0;i<totalCells;i++){
-            const dayIndex = i - prevDays + 1;
-            let inMonth = dayIndex>0 && dayIndex<=daysInMonth;
-            let day = inMonth ? dayIndex : (dayIndex<=0 ? prevMonthLastDate + dayIndex : dayIndex - daysInMonth);
-
-            let cellDate;
-            if(inMonth){
-              cellDate = new Date(this.viewYear, this.viewMonth, day);
-            } else if(dayIndex<=0){
-              cellDate = new Date(this.viewYear, this.viewMonth-1, day);
-            } else {
-              cellDate = new Date(this.viewYear, this.viewMonth+1, day);
-            }
-
-            cells.push({ key: i, day: day, inMonth: inMonth, date: cellDate });
-          }
-
-          this.calendar = cells;
-        },
-
-        prevMonth(){
-          if(this.viewMonth === 0){ this.viewMonth = 11; this.viewYear -= 1; }
-          else this.viewMonth -= 1;
-          this.regenerate();
-        },
-        nextMonth(){
-          if(this.viewMonth === 11){ this.viewMonth = 0; this.viewYear += 1; }
-          else this.viewMonth += 1;
-          this.regenerate();
-        },
-
-        reserve(){
-          if(!this.selectedStart){ alert('Please pick a check-in date'); return; }
-          if(!this.selectedEnd){ alert('Please pick a check-out date'); return; }
-
-          const payload = {
-            villa_id: this.selectedVilla,
-            check_in: this.toKey(this.selectedStart),
-            check_out: this.toKey(this.selectedEnd),
-            guests: this.guests
-          };
-          // Replace with AJAX/form submission to your route when ready
-          alert('Reserve\n' + JSON.stringify(payload, null, 2));
+          this.selectedStartDisplay = date.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+          return;
         }
+
+        if(!this.selectedEnd){
+          if(date < this.selectedStart){
+            this.selectedStart = date;
+            this.selectedStartDisplay = date.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+            return;
+          }
+          this.selectedEnd = date;
+          this.selectedEndDisplay = date.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+          return;
+        }
+
+        this.selectedStart = date;
+        this.selectedEnd = null;
+        this.selectedStartDisplay = date.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+        this.selectedEndDisplay = null;
+      },
+
+      clearRange(){
+        this.selectedStart = this.selectedEnd = null;
+        this.selectedStartDisplay = this.selectedEndDisplay = null;
+      },
+
+      regenerate(){
+        const first = new Date(this.viewYear,this.viewMonth,1);
+        const startDay = first.getDay();
+        const daysInMonth = new Date(this.viewYear,this.viewMonth+1,0).getDate();
+
+        const cells=[];
+        for(let i=0;i<42;i++){
+          const d = new Date(this.viewYear,this.viewMonth,i-startDay+1);
+          cells.push({
+            key:i,
+            day:d.getDate(),
+            inMonth:d.getMonth()===this.viewMonth,
+            date:d
+          });
+        }
+        this.calendar=cells;
+      },
+
+      prevMonth(){
+        this.viewMonth===0?(this.viewMonth=11,this.viewYear--):this.viewMonth--;
+        this.regenerate();
+      },
+
+      nextMonth(){
+        this.viewMonth===11?(this.viewMonth=0,this.viewYear++):this.viewMonth++;
+        this.regenerate();
       }
     }
+  }
 
-    // helper to toggle profile dropdown
-    function toggleProfileMenu(){
-      const dd = document.getElementById('profileDropdown');
-      if(!dd) return;
-      dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
-    }
-  </script>
+  function toggleProfileMenu(){
+    const dd = document.getElementById('profileDropdown');
+    if(dd) dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+  }
+</script>
+
 </body>
 </html>

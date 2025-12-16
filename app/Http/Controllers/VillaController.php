@@ -14,6 +14,10 @@ class VillaController extends Controller
         return view('villas.index', compact('villas'));
     }
 
+
+    // VILLA AB
+    
+    
     // 🔹 Form tambah villa
     public function create()
     {

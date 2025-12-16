@@ -17,6 +17,15 @@ Route::get('/', function () {
     return view('landing'); // resources/views/landing.blade.php
 })->name('landing');
 
+Route::get('/availability', function () {
+    return view('availability');
+})->name('availability');
+
+
+Route::get('/villa', function () {
+    return view('villa');
+})->name('villa');
+
 
 /* ============================
    2️ CRUD DATA VILLA
@@ -111,7 +120,8 @@ Route::post('/password/reset', function (Request $request) {
 })->name('password.update');
 
 use App\Http\Controllers\AvailabilityController;
-Route::get('/check-availability', [AvailabilityController::class, 'index'])->name('availability.index');
+Route::get('/check-availability', [AvailabilityController::class, 'index'])
+->name('availability.index');
 
 
 
